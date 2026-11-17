@@ -1,0 +1,12 @@
+# 비밀값
+.env
+.env.*
+!.env.example
+
+# Claude 개인 설정 (skills 폴더는 올림)
+.claude/settings.local.json
+
+# 이후 Next.js용
+node_modules/
+.next/
+.vercel/
