@@ -1,50 +1,161 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- 버전: 1.0.0 → 1.0.1 (PATCH: Spec Kit 1.4 명령 이름 반영, /speckit.analyze → /speckit-analyze / 레포 · 폴더 이름 ai-cart로 변경)
+- 이전: 1.0.0-draft → 1.0.0 (비준)
+- 변경: 프로젝트명 확정(AI Cart) / 네트워크 프로필 확정(Slow 4G) / 성능 예산 허용 오차 확정(+10%)
+         / "릴리스 단계" 절 추가(1차: S6 제외 전체, 2차: S6) / 원칙 IV를 릴리스 단계 기준으로 수정
+         / 작업 규칙에 브랜치 · 병합 · 태그 규칙 추가 / "비준 전 확인" 절 삭제
+- 후속 반영 필요: PRD 정리본 1장 · 3장 · 5장 · 6장 (수정 제안 등록), SDD 작업 흐름 3장
+-->
+
+# AI Cart Constitution
+
+AI에게 말하면 원하는 상품을 장바구니까지 담아주는 모바일 커머스. 그 바탕으로, 중저가 휴대폰과 느린 네트워크에서도 상품을 찾고 결제까지 막힘없이 끝낼 수 있는 구매 흐름을 먼저 만든다.
+
+## 0. 문서 위계
+
+충돌하면 위에 있는 문서가 이긴다.
+
+1. **PRD 정리본**: 무엇을 왜 만드는지. PRD가 바뀌면 이 문서도 같은 PR에서 개정한다
+2. **이 Constitution**: 모든 spec · plan · tasks가 지키는 규칙
+3. **문제 해결 설계서 (선정안)**: plan 단계에서 쓰는 대안 비교와 선택 이유의 출처
+4. **기능별 spec.md → plan.md → tasks.md**
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. 측정 먼저 (Baseline First)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+- 모든 기능의 tasks.md는 **기준점 구현 → 측정 → 개선 → 재측정 · 기록** 네 단계로 나눈다. (MUST)
+- 1단계는 가장 빨리 동작시키는 방법으로 만든다. plan.md에서 선택한 방식은 3단계에서만 적용한다. (MUST)
+- 2단계에서 문제가 재현되지 않으면 3단계를 지우고, 재현되지 않았다는 결과를 기록한다.
+- 예외: 정확성이 핵심인 기능(S3 결제)은 1단계에서 장애 시나리오 테스트를 먼저 쓰고, 그 테스트를 통과시키는 방식으로 진행한다.
+- S0(기반)은 사용자 기능이 아니므로 네 단계를 적용하지 않는다.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+> 근거: 최종 설계를 바로 구현하면 "개선 전" 수치가 남지 않는다. 개선 전 수치가 없으면 서류와 면접에서 개선을 주장할 수 없다.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. 기준 환경 고정 (Reference Environment)
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+모든 성능 수치는 아래 조건에서만 잰다. 조건이 바뀌면 이전 수치와 비교할 수 없으므로 바꾸지 않는다.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+| 항목 | 고정값 |
+| --- | --- |
+| 기기 | 개발 노트북 1대 (모델명: [S0 착수 시 기입]) |
+| CPU | Chrome DevTools에서 보정(Calibrate)한 "저사양 모바일(Low-tier mobile)" 프리셋. 보정 배수는 노트북마다 다르므로 처음 보정한 배수를 여기에 적고, 자동 측정도 같은 배수를 쓴다 → **배수: [S0 착수 시 보정 후 기입]** |
+| 네트워크 | Chrome DevTools 기본 프리셋 **Slow 4G**. 프리셋 수치는 크롬 버전에 따라 바뀔 수 있으므로 측정 기록마다 브라우저 버전을 함께 남긴다 |
+| 빌드 | 프로덕션 빌드만. 개발 서버 수치는 기록하지 않는다 |
+| 데이터 | S0 시드(고정 시드값, 상품 100,000개) |
+| 캐시 | 기본은 캐시를 비운 첫 방문. 재방문 측정은 기록에 명시 |
+| 횟수 | 같은 조건 3회, 중앙값 기록. 3회 원값도 함께 남긴다 |
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+수치는 두 종류로 나누어 쓴다.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- **기준 환경 측정값**: README · ADR · 이력서에 쓰는 유일한 수치
+- **CI 측정값**: 회귀 감지용. CI 러너의 성능이 기준 환경과 다르므로 외부에 쓰지 않는다
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. FE 몫 중심
+
+- 서버 · 인프라 작업은 기능이 성립하는 데 필요한 최소한만 한다.
+- 서버 쪽 대기열 설계 · 봇 대응 · 에러 모니터링 · 기능 플래그는 만들지 않는다.
+- plan에 서버 작업이 들어가면, 그 작업이 없으면 왜 기능이 성립하지 않는지 한 줄로 남긴다.
+
+### IV. 범위 준수
+
+- PRD 5장 "제외 범위"의 항목은 plan · tasks에 넣지 않는다. 필요해 보이면 PRD를 먼저 고친다.
+- 기능은 아래 "릴리스 단계"의 순서로 만든다. 다음 단계 기능은 이전 단계가 배포되기 전에 시작하지 않는다.
+- 한 기능이 spec부터 측정 · 기록까지 끝나야 다음 기능의 spec을 연다.
+
+### V. 정직한 기록
+
+- README 첫머리에 실사용자 · 실결제가 없고 모든 수치가 실험실 측정이라는 점을 밝힌다.
+- README에 릴리스 단계별 진행 상태를 적는다. 완성되지 않은 기능(2차의 AI 어시스턴트 등)은 "개발 예정"으로 표시하고, 완성된 것처럼 쓰지 않는다.
+- 수치는 잰 것만, 측정 조건과 함께 쓴다. 유리한 회차만 고르지 않는다.
+- 기대만큼 효과가 없었던 시도도 측정값과 함께 ADR에 남긴다.
+
+## 릴리스 단계
+
+기능 우선순위(P0~P2)는 PRD의 중요도 표시로 남기고, **만드는 순서와 배포 범위는 이 표를 따른다.**
+
+| 단계 | 스펙 | 완료 조건 | 이후 |
+| --- | --- | --- | --- |
+| **1차 배포** | S0 → S1 → S2 → S3 → S4 · S5 → S7 | 각 스펙의 Success Criteria 통과 + 측정 · ADR 기록 완료 | 서류에 반영하고 지원 시작 |
+| **2차 배포 (AI Cart 완성)** | S6 | S6 Success Criteria 통과 + 측정 · ADR 기록 완료 | README 한 줄 설명을 최종 목표 문장으로 교체 |
+
+- S4와 S5는 서로 의존하지 않으므로 순서를 바꿔도 된다.
+- 스펙 ID 번호는 만드는 순서가 아니다. S6은 번호와 관계없이 마지막에 만든다.
+- `main`은 항상 배포된 상태이므로, 1차 배포 전에도 완성된 스펙까지는 배포 주소에서 동작한다.
+
+## 기술 스택
+
+PRD의 잠정 스택을 그대로 따른다. 추가 · 교체는 Constitution 개정 PR로만 한다.
+
+| 영역 | 기술 |
+| --- | --- |
+| 프레임워크 | Next.js (App Router) · TypeScript (strict) |
+| 상태 · 데이터 | TanStack Query · Zustand |
+| 백엔드 · DB · 저장소 | Supabase |
+| 결제 | 결제 대행사 테스트 모드 (대행사 미정, S3 plan에서 결정) |
+| AI | LLM API (제공사 · 모델 미정, S6 plan에서 결정) |
+| 테스트 | Vitest · Playwright |
+| 성능 측정 | Lighthouse CI · 부하 테스트 도구 (k6 등) |
+| 배포 | Vercel |
+
+## 품질 게이트
+
+PRD 7장 비기능 요구사항을 게이트로 옮긴 것이다. 각 기능 spec은 해당하는 항목을 인수 조건에 붙인다.
+
+| 게이트 | 기준 | 적용 범위 |
+| --- | --- | --- |
+| 기본 검사 | 타입 검사 · 단위 테스트 · E2E 통과 | 모든 PR 병합 조건 |
+| 성능 예산 | 화면별 예산을 넘으면 PR 실패. 예산값 = 4단계 재측정 중앙값 + 10%. S0에서 잰 측정 재현성이 10%보다 나쁘면 그 값으로 개정한다 | 4단계가 끝나 예산이 등록된 화면만. 1 · 2단계 PR은 측정값만 남기고 실패시키지 않는다 |
+| 성능 목표 | Core Web Vitals "좋음" (LCP 2.5초 · INP 200ms · CLS 0.1 이하). 기준 환경에서 닿지 못하면 첫 구현 대비 개선 수치가 최소 기준 | 모든 기능의 성공 기준 |
+| 결제 정확성 | 지연 · 유실 · 중간 끊김 · 연타 · 새로고침 · 여러 탭 장애 시나리오 E2E가 CI에서 자동 실행 | 결제 · 주문 관련 변경 PR |
+| 접근성 | 키보드만으로 목록 → 상세 → 결제 완료 / 버튼 · 옵션에 스크린리더용 이름 | 해당 화면을 다루는 기능 |
+| 보안 | 결제 시크릿 키 · LLM API 키는 서버에서만 사용하고 클라이언트 산출물에 없음을 검사 / 에러 기록 전 개인정보 가림 | 모든 PR |
+| 비용 | LLM 월 사용 한도 / 개발 중엔 목 응답 기본 / 공개 데모엔 요청 횟수 제한 | AI 기능 |
+| 지원 환경 | 모바일 크롬 우선, iOS 사파리는 핵심 흐름 동작만 확인 | 모든 화면 |
+
+## 작업 규칙
+
+### 스펙 작성
+
+- spec.md에는 무엇을 왜 하는지만 쓴다. 라이브러리 · 패턴 같은 구현 방식은 plan.md에 쓴다.
+- PRD 6장 성공 기준을 spec의 Success Criteria로 옮긴다.
+- 기능 우선순위(P0~P2)와 릴리스 단계는 spec 머리말에 적는다. 사용자 스토리 우선순위는 헷갈리지 않도록 "필수 / 보조"로 적는다.
+- Clarify와 Analyze는 생략하지 않는다.
+- `[NEEDS CLARIFICATION]`은 spec 하나에 3개까지. 나머지는 Assumptions에 기본값으로 적는다.
+- plan의 research.md에는 설계서의 기각한 대안과 이유를 옮긴다. 이 내용이 ADR 초안이 된다.
+
+### 이름
+
+- 서비스 이름(화면 · README 제목): AI Cart
+- 레포 · 프로젝트 폴더 이름: `ai-cart` (소문자 · 하이픈)
+
+| 스펙 ID | 폴더 · 브랜치 이름 | 릴리스 단계 |
+| --- | --- | --- |
+| S0 | 000-foundation | 1차 |
+| S1 | 001-product-list | 1차 |
+| S2 | 002-product-detail | 1차 |
+| S3 | 003-checkout-payment | 1차 |
+| S4 | 004-detail-image | 1차 |
+| S5 | 005-waiting-room | 1차 |
+| S6 | 006-ai-assistant | 2차 |
+| S7 | 007-image-editor | 1차 |
+
+### 브랜치 · 병합 · 기록
+
+- `main`은 항상 배포 가능한 상태로 둔다. 배포용 브랜치는 따로 두지 않는다 (Vercel이 `main`은 본 배포, 나머지 브랜치는 미리보기 배포로 처리).
+- 스펙마다 기능 브랜치 하나(위 표의 이름)를 쓴다.
+- `main`은 CI를 통과해야 병합되도록 보호 규칙을 건다.
+- 기능 브랜치는 tasks의 단계(기준점 → 측정 → 개선 → 재측정 · 기록)마다 PR로 `main`에 병합한다. 커밋 기록이 남도록 squash가 아닌 일반 merge로 한다.
+- 측정 시점의 커밋에 태그를 단다. 예: `001-baseline`, `001-improved`
+- 커밋은 태스크 단위로 한다.
+- ADR은 S1~S7 기능마다 1건, 모두 7건. 형식은 문제 · 대안 · 선택 이유 · 측정 결과
+- 측정 기록은 S0에서 정한 형식 하나로만 남긴다.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- `/speckit-analyze`에서 Constitution 위반이 나오면 해결하기 전에는 Implement로 넘어가지 않는다.
+- 개정은 PR로 하고 버전을 올린다. MAJOR: 원칙 삭제 · 재정의 / MINOR: 원칙 · 게이트 · 절 추가 / PATCH: 문구 수정 · 기입란 채우기
+- 기준 환경(원칙 II)을 바꾸는 개정은 이미 측정한 모든 기능의 기준점을 다시 잰다는 계획과 함께 한다.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.1 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-17
