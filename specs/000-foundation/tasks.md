@@ -44,8 +44,8 @@
 
 **목적**: Supabase CLI 초기화, 5개 테이블 스키마와 RLS 정책 마이그레이션 파일 작성, 서버/클라이언트 Supabase 클라이언트 분리. US1·US5의 전제 조건.
 
-- [ ] T011 Run `npx supabase init` in repo root — supabase/config.toml 생성 (C1: `npx supabase start`, `npx supabase db reset`, CI supabase/setup-cli Action 모두 config.toml 필요; T012보다 먼저 실행 필수)
-- [ ] T012 Create supabase/migrations/20261121000000_initial_schema.sql — 5 tables (images, products, option_groups, option_values, stocks), indexes, RLS policies per data-model.md:
+- [X] T011 Run `npx supabase init` in repo root — supabase/config.toml 생성 (C1: `npx supabase start`, `npx supabase db reset`, CI supabase/setup-cli Action 모두 config.toml 필요; T012보다 먼저 실행 필수)
+- [X] T012 Create supabase/migrations/20261121000000_initial_schema.sql — 5 tables (images, products, option_groups, option_values, stocks), indexes, RLS policies per data-model.md:
   - images: id uuid PK DEFAULT gen_random_uuid(), storage_path text NOT NULL UNIQUE, public_url text NOT NULL, type text NOT NULL CHECK (type IN ('thumbnail','detail')), size_bytes int NOT NULL, created_at timestamptz NOT NULL DEFAULT now()
   - products: id uuid PK, name text NOT NULL (1~100자 극단값 포함), price int NOT NULL (1000~2000000), category text NOT NULL CHECK IN ('tops','bottoms','outerwear','shoes','bags','accessories'), attributes jsonb NOT NULL ({season:[], material:string, style:string}), thumbnail_image_id uuid NOT NULL REFERENCES images(id), detail_image_id uuid REFERENCES images(id), sort_order int NOT NULL UNIQUE, created_at timestamptz
   - option_groups: id uuid PK, product_id uuid NOT NULL REFERENCES products ON DELETE CASCADE, name text NOT NULL, display_order int NOT NULL, UNIQUE(product_id, display_order)
@@ -53,9 +53,9 @@
   - stocks: id uuid PK, product_id uuid NOT NULL REFERENCES products ON DELETE CASCADE, option_value_ids uuid[] NOT NULL DEFAULT '{}', quantity int NOT NULL DEFAULT 0 CHECK (quantity >= 0), UNIQUE(product_id, option_value_ids)
   - Indexes: idx_products_sort_order, idx_products_category, idx_products_attributes (GIN), idx_option_groups_product_id, idx_option_values_group_id, idx_stocks_product_id, idx_stocks_option_value_ids (GIN)
   - RLS: ENABLE ROW LEVEL SECURITY + CREATE POLICY "public read" FOR SELECT USING (true) on all 5 tables
-- [ ] T013 [P] Create src/lib/supabase/client.ts — browser client using createBrowserClient from @supabase/ssr, NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY only (FR-021)
-- [ ] T014 [P] Create src/lib/supabase/server.ts — server-only client using createServerClient from @supabase/ssr with SUPABASE_SERVICE_ROLE_KEY; for Server Components and API Routes only; add comment "서버 전용 — 클라이언트 코드에서 import 금지" (FR-021)
-- [ ] T015 Create docs/measurements/config.json — { "cpu_slowdown_multiplier": null, "device_model": null, "browser_version_at_first_measurement": null } (Constitution 원칙 II, FR-010)
+- [X] T013 [P] Create src/lib/supabase/client.ts — browser client using createBrowserClient from @supabase/ssr, NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY only (FR-021)
+- [X] T014 [P] Create src/lib/supabase/server.ts — server-only client using createServerClient from @supabase/ssr with SUPABASE_SERVICE_ROLE_KEY; for Server Components and API Routes only; add comment "서버 전용 — 클라이언트 코드에서 import 금지" (FR-021)
+- [X] T015 Create docs/measurements/config.json — { "cpu_slowdown_multiplier": null, "device_model": null, "browser_version_at_first_measurement": null } (Constitution 원칙 II, FR-010)
 
 **검증**: `npx supabase db push`로 원격 DB 마이그레이션 적용, Supabase 대시보드에서 5개 테이블·7개 인덱스·RLS 정책 확인
 
