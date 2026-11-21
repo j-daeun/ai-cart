@@ -1,5 +1,5 @@
 {
-  "cpu_slowdown_multiplier": null,
-  "device_model": null,
-  "browser_version_at_first_measurement": null
+  "cpu_slowdown_multiplier": 1.8,
+  "device_model": "SAMSUNG ELECTRONICS CO., LTD. 900X3L",
+  "browser_version_at_first_measurement": "Chrome 157.0.0.0"
 }

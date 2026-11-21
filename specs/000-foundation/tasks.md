@@ -135,7 +135,7 @@
 
 **Independent Test**: `npm run build && npm start` 후 `npm run measure -- --url http://localhost:3000 --spec 000-foundation --page layout --scenario page-load --force-prod` → docs/measurements/000-foundation.json에 세트 1개 추가, FR-014의 8항목 모두 포함 확인.
 
-- [ ] T024 [US2] Create scripts/measure.ts — per contracts/measure-cli.md:
+- [X] T024 [US2] Create scripts/measure.ts — per contracts/measure-cli.md:
   - CLI args 파싱: --url (required), --spec (required), --page, --scenario (default: page-load), --runs (default: 3), --force-prod
   - 사전 조건: docs/measurements/config.json의 cpu_slowdown_multiplier != null; localhost URL + --force-prod 없으면 "Error: Production build required." 출력 후 exit 1 (FR-013)
   - config.json에서 cpu_slowdown_multiplier, device_model, browser_version 읽기
