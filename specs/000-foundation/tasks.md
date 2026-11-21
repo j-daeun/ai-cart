@@ -15,13 +15,13 @@
 
 **목적**: Next.js 15 App Router 프로젝트 뼈대와 모든 의존성 설치. 이후 모든 Phase의 전제 조건.
 
-- [ ] T001 Create Next.js 15 App Router project with TypeScript strict in repo root (src/ directory structure per plan.md)
-- [ ] T002 [P] Install primary runtime dependencies: @supabase/supabase-js, @supabase/ssr, @faker-js/faker v9, sharp, lighthouse, tsx in package.json
-- [ ] T003 [P] Install dev dependencies: vitest, @vitest/coverage-v8, @playwright/test, @axe-core/playwright, tailwindcss, @types/node, dotenv-cli in package.json
+- [X] T001 Create Next.js 15 App Router project with TypeScript strict in repo root (src/ directory structure per plan.md)
+- [X] T002 [P] Install primary runtime dependencies: @supabase/supabase-js, @supabase/ssr, @faker-js/faker v9, sharp, lighthouse, tsx in package.json
+- [X] T003 [P] Install dev dependencies: vitest, @vitest/coverage-v8, @playwright/test, @axe-core/playwright, tailwindcss, @types/node, dotenv-cli in package.json
   - `@axe-core/playwright`: SC-007 "자동 접근성 검사 심각·치명 위반 0건" 충족을 위한 axe 연동 (C2)
   - `dotenv-cli`: seed:local 등 npm 스크립트에서 .env.test.local을 선택적으로 로드하기 위해 필요 (U1)
-- [ ] T004 Configure tsconfig.json — strict mode, paths alias (@/* → ./src/*), target ES2022
-- [ ] T005 Configure npm scripts in package.json — dev, build, start, test, test:e2e, seed, seed:local, seed:verify, seed:verify:local, measure, measure:compare:
+- [X] T004 Configure tsconfig.json — strict mode, paths alias (@/* → ./src/*), target ES2022
+- [X] T005 Configure npm scripts in package.json — dev, build, start, test, test:e2e, seed, seed:local, seed:verify, seed:verify:local, measure, measure:compare:
   - `"seed": "tsx scripts/seed.ts"` — .env.local의 SUPABASE_URL 사용 (원격)
   - `"seed:local": "dotenv -e .env.test.local -- tsx scripts/seed.ts"` — .env.test.local의 SUPABASE_URL 사용 (로컬 Docker, U1)
   - `"seed:verify": "tsx scripts/seed-verify.ts"` — 원격 DB 검증
@@ -29,12 +29,12 @@
   - `"measure": "tsx scripts/measure.ts"`
   - `"measure:compare": "tsx scripts/measure.ts compare"` — measure.ts 내 compare 서브커맨드 호출
   - `"test:e2e": "playwright test"`
-- [ ] T006 Create .gitignore — exclude .env*.local, node_modules, .next, supabase/.branches, supabase/.temp
+- [X] T006 Create .gitignore — exclude .env*.local, node_modules, .next, supabase/.branches, supabase/.temp
   - docs/measurements/ 는 측정 원본 기록이므로 Git 추적 대상 — gitignore에 포함하지 않음 (Clarify Q3: JSON은 측정 도구만 쓰는 원본, FR-015)
-- [ ] T007 Create .env.local.example documenting NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY with comments (FR-021)
-- [ ] T008 [P] Create .env.test.local.example documenting local Docker Supabase vars (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY for local instance)
-- [ ] T009 Create next.config.ts — images.remotePatterns for Supabase Storage public bucket (product-images), TypeScript strict
-- [ ] T010 [P] Create tailwind.config.ts and src/app/globals.css — Tailwind base styles, min-width 360px global default
+- [X] T007 Create .env.local.example documenting NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY with comments (FR-021)
+- [X] T008 [P] Create .env.test.local.example documenting local Docker Supabase vars (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY for local instance)
+- [X] T009 Create next.config.ts — images.remotePatterns for Supabase Storage public bucket (product-images), TypeScript strict
+- [X] T010 [P] Create tailwind.config.ts and src/app/globals.css — Tailwind base styles, min-width 360px global default
 
 **검증**: `npm install` 성공, `npm run build` 성공 (빈 App Router 프로젝트), `npm run dev`로 localhost:3000 접속 가능
 
