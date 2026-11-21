@@ -67,11 +67,11 @@
 
 **Independent Test**: 빈 DB에서 `npm run seed:local` 2회 실행 → `npm run seed:verify:local -- --compare`로 완전 일치 확인.
 
-- [ ] T016 [US1] Create scripts/generate-images.ts — sharp로 이미지 파일 생성:
+- [X] T016 [US1] Create scripts/generate-images.ts — sharp로 이미지 파일 생성:
   - 썸네일 200장: 800×800 JPEG 95% 품질, 카테고리별 단색 배경, 파일명 thumbnails/thumb-{000-199}.jpg (3자리 zero-padded)
   - 긴 상세 15장: 800×5000 JPEG 90% 품질, 파일명 details/detail-{00-14}.jpg (2자리 zero-padded)
   - 로컬 임시 디렉토리에 생성 후 경로 배열 반환 (seed.ts 내부에서 호출)
-- [ ] T017 [US1] Create scripts/seed.ts — main seed script per contracts/seed-cli.md:
+- [X] T017 [US1] Create scripts/seed.ts — main seed script per contracts/seed-cli.md:
   - faker.seed(42), SEED_VALUE env var로 재정의 가능 (FR-002)
   - SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY로 service role 클라이언트 연결
   - 버킷 "product-images" 생성: 멱등 (존재하면 건너뜀) (D-007)
@@ -86,7 +86,7 @@
   - stocks.option_value_ids: group display_order 오름차순 정렬 보장, UNIQUE(product_id, option_value_ids)
   - 원자성: 오류 시 TRUNCATE images, products, option_groups, option_values, stocks CASCADE로 롤백 (FR-008)
   - stdout 진행 출력 (seed-cli.md 형식), stderr 오류 출력, 종료 코드 0/1
-- [ ] T018 [US1] Create scripts/seed-verify.ts — 시드 검증 스크립트:
+- [X] T018 [US1] Create scripts/seed-verify.ts — 시드 검증 스크립트:
   - `npm run seed:verify`: products 100,000건 카운트 + 모든 상품에 thumbnail_image_id 연결 확인 (SC-001 간접 검증)
   - `--compare` flag: seed 2회 실행 후 products 전체 필드 값·순서 비교 → 100% 일치 확인 (SC-002)
 

@@ -10,12 +10,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "seed": "tsx scripts/seed.ts",
+    "seed": "dotenv -e .env.local -- tsx scripts/seed.ts",
     "seed:local": "dotenv -e .env.test.local -- tsx scripts/seed.ts",
-    "seed:verify": "tsx scripts/seed-verify.ts",
+    "seed:verify": "dotenv -e .env.local -- tsx scripts/seed-verify.ts",
     "seed:verify:local": "dotenv -e .env.test.local -- tsx scripts/seed-verify.ts",
-    "measure": "tsx scripts/measure.ts",
-    "measure:compare": "tsx scripts/measure.ts compare"
+    "measure": "dotenv -e .env.local -- tsx scripts/measure.ts",
+    "measure:compare": "dotenv -e .env.local -- tsx scripts/measure.ts compare"
   },
   "dependencies": {
     "@faker-js/faker": "^10.6.0",
