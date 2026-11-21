@@ -103,20 +103,20 @@
 
 **Independent Test**: `npm run build && npm start`, 360px 너비로 접속 → skip nav 동작, AI Cart 홈 링크, 비활성 장바구니 버튼, 존재하지 않는 경로에서 404 화면 확인.
 
-- [ ] T019 [US5] Create src/components/layout/SkipNav.tsx — "본문으로 건너뛰기" skip nav:
+- [X] T019 [US5] Create src/components/layout/SkipNav.tsx — "본문으로 건너뛰기" skip nav:
   - 평소 화면 밖 위치 (sr-only 또는 absolute -top-full), focus 시 화면에 표시
   - href="#main-content"로 이동 (FR-024)
   - accessible name: "본문으로 건너뛰기"
-- [ ] T020 [US5] Create src/components/layout/Header.tsx — 헤더 컴포넌트:
+- [X] T020 [US5] Create src/components/layout/Header.tsx — 헤더 컴포넌트:
   - `<a href="/">` AI Cart 홈 링크 — accessible name "AI Cart 홈" (FR-022, FR-024)
   - `<button aria-disabled="true" aria-label="장바구니">` — 시각적으로 흐리게 (opacity-50 또는 동등), onClick={undefined}, 포커스 가능 (FR-022)
   - 클릭해도 아무 동작 없음; 실제 동작·수량 표시는 S3에서 추가
-- [ ] T021 [US5] Create src/app/layout.tsx — Root Layout:
+- [X] T021 [US5] Create src/app/layout.tsx — Root Layout:
   - `<SkipNav />`, `<Header />`, `<main id="main-content">`, `{children}`
   - Tailwind: min-w-[360px], 데스크톱에서 max-w-[480px] mx-auto (모바일 레이아웃 가운데 정렬) (FR-023)
   - lang="ko" on <html>
-- [ ] T022 [US5] Create src/app/page.tsx — 홈 placeholder (텍스트 "상품 목록 준비 중 — S1에서 추가 예정", S1에서 교체)
-- [ ] T023 [US5] Create src/app/not-found.tsx — 404 화면:
+- [X] T022 [US5] Create src/app/page.tsx — 홈 placeholder (텍스트 "상품 목록 준비 중 — S1에서 추가 예정", S1에서 교체)
+- [X] T023 [US5] Create src/app/not-found.tsx — 404 화면:
   - 공통 레이아웃(layout.tsx) 안에 렌더링됨
   - 안내 문구 + `<a href="/">` 홈으로 가는 링크 (FR-025)
 

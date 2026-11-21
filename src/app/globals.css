@@ -1,9 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 — @import로 모든 레이어(base, components, utilities) 포함 */
+@import "tailwindcss";
 
-/* 모바일 최소 너비 — 360px 미만 기기에서 가로 스크롤 방지 (FR-023) */
-html,
-body {
-  min-width: 360px;
-}
+/*
+ * FR-023: 360px 기준 모바일 레이아웃
+ * min-width 강제는 스크롤바 15px로 인한 오버플로를 유발하므로 사용하지 않음.
+ * 레이아웃 자체가 콘텐츠를 360px 안에 맞도록 설계됨.
+ */
