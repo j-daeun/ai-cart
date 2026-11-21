@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 모바일 최소 너비 — 360px 미만 기기에서 가로 스크롤 방지 (FR-023) */
+html,
+body {
+  min-width: 360px;
+}

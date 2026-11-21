@@ -1,12 +1,36 @@
-# 비밀값
-.env
-.env.*
-!.env.example
+# 환경 변수 — 저장소에 커밋 금지 (FR-021)
+.env*.local
+# .env.local.example, .env.test.local.example 은 예시 파일이므로 추적 대상
 
 # Claude 개인 설정 (skills 폴더는 올림)
 .claude/settings.local.json
 
-# 이후 Next.js용
+# Dependencies
 node_modules/
+
+# Next.js build output
 .next/
+out/
+
+# Supabase local Docker state
+supabase/.branches/
+supabase/.temp/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary seed images (sharp 생성 중간 파일)
+scripts/tmp/
+
+# Vercel
 .vercel/
+
+# docs/measurements/ 는 측정 원본 기록이므로 Git 추적 대상 — 포함 안 함 (Clarify Q3, FR-015)

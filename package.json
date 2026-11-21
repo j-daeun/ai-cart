@@ -1,0 +1,47 @@
+{
+  "name": "ai-cart",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "seed": "tsx scripts/seed.ts",
+    "seed:local": "dotenv -e .env.test.local -- tsx scripts/seed.ts",
+    "seed:verify": "tsx scripts/seed-verify.ts",
+    "seed:verify:local": "dotenv -e .env.test.local -- tsx scripts/seed-verify.ts",
+    "measure": "tsx scripts/measure.ts",
+    "measure:compare": "tsx scripts/measure.ts compare"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
+    "lighthouse": "^12.8.2",
+    "next": "^15.5.29",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitest/coverage-v8": "^5.1.1",
+    "autoprefixer": "^10.7.0",
+    "dotenv-cli": "^11.1.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.6",
+    "postcss": "^8.5.33",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.1"
+  }
+}
