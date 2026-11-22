@@ -166,8 +166,8 @@
 
 **Independent Test**: 레이아웃 문구 하나 변경 PR → Vercel 미리보기 URL 접속 → `main` 병합 → 본 배포 URL 반영 확인.
 
-- [ ] T025 [US4] Configure Vercel project — GitHub 저장소 연결, main 브랜치 → 본 배포, PR 브랜치 → 미리보기 배포 자동 생성 (Vercel 대시보드 설정, FR-019, FR-020)
-- [ ] T026 [US4] Add Vercel environment variables — Vercel 대시보드에서:
+- [X] T025 [US4] Configure Vercel project — GitHub 저장소 연결, main 브랜치 → 본 배포, PR 브랜치 → 미리보기 배포 자동 생성 (Vercel 대시보드 설정, FR-019, FR-020)
+- [X] T026 [US4] Add Vercel environment variables — Vercel 대시보드에서:
   - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY: Preview + Production 환경 모두
   - SUPABASE_SERVICE_ROLE_KEY: Production 환경만 (클라이언트 번들 노출 차단, FR-021)
   - 로컬 .env.local과 .env.test.local은 저장소에 커밋하지 않음
