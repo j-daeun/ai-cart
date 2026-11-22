@@ -25,7 +25,13 @@ export default function RootLayout({
         <SkipNav />
         <div className="max-w-[480px] mx-auto">
           <Header />
-          <main id="main-content">{children}</main>
+          {/*
+           * tabIndex={-1}: skip nav의 Enter 후 focus() 타겟이 되기 위해 필요
+           * outline-none: 프로그래매틱 포커스 시 시각적 테두리 억제 (스크린리더엔 무관)
+           */}
+          <main id="main-content" tabIndex={-1} className="outline-none">
+            {children}
+          </main>
         </div>
       </body>
     </html>
