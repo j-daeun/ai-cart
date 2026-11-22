@@ -185,18 +185,18 @@
 
 **Independent Test**: 타입 오류 PR, 실패하는 테스트 PR, 서버 키 노출 PR 세 개를 각각 올려 차단 확인.
 
-- [ ] T027 [US3] Create vitest.config.ts — Vitest 설정: environment jsdom, include src/**/*.test.ts, paths alias 동기화, coverage provider v8
+- [X] T027 [US3] Create vitest.config.ts — Vitest 설정: environment jsdom, include src/**/*.test.ts, paths alias 동기화, coverage provider v8
   - **결정 메모 (U2)**: S0에서 단위 테스트 파일을 별도로 추가하지 않는다면 `passWithNoTests: true`를 설정해 CI가 "0 test files"로 실패하지 않게 해야 함. 대안: Phase 7에 최소 단위 테스트 태스크 추가 (예: src/lib/supabase/client.test.ts). 구현 시 선택
-- [ ] T028 [P] [US3] Create playwright.config.ts — Playwright 설정: baseURL=http://localhost:3000, testDir=tests/e2e, 로컬 Supabase Docker URL 로드 (.env.test.local), webServer 옵션으로 테스트 전 dev 서버 자동 시작
+- [X] T028 [P] [US3] Create playwright.config.ts — Playwright 설정: baseURL=http://localhost:3000, testDir=tests/e2e, 로컬 Supabase Docker URL 로드 (.env.test.local), webServer 옵션으로 테스트 전 dev 서버 자동 시작
   - **결정 메모 (U3)**: FR-009 2단계 초기화(시드 존재 확인 + 가변 테이블 비우기) 로직을 `tests/e2e/global-setup.ts`(Playwright globalSetup)로 구현할지 결정 필요. S0에는 가변 테이블이 없으므로 CI의 `npm run seed:local`로 충분하나, S3+ 가변 테이블(cart 등) 추가 시 globalSetup 없이는 FR-009 불충족. 지금 만들어 두면 S3에서 비우기 로직만 추가하면 됨
-- [ ] T029 [P] [US3] Create tests/e2e/layout.spec.ts — 공통 레이아웃 E2E + axe 접근성 자동화 (US5 acceptance scenarios + SC-007 커버):
+- [X] T029 [P] [US3] Create tests/e2e/layout.spec.ts — 공통 레이아웃 E2E + axe 접근성 자동화 (US5 acceptance scenarios + SC-007 커버):
   - 360px viewport: 가로 스크롤 없음 확인
   - Tab 첫 포커스 → "본문으로 건너뛰기" 가시화, Enter → #main-content 포커스
   - "AI Cart 홈" 링크 → href="/" 확인
   - 장바구니 버튼: aria-disabled="true", accessible name "장바구니"
   - /nonexistent → 404 화면 + 홈 링크 확인
   - **axe 접근성 스캔 (C2)**: @axe-core/playwright로 각 페이지(/, /nonexistent) 스캔. `checkA11y()` 위반 중 심각(critical)·치명(serious) 등급 0건 assert (SC-007)
-- [ ] T030 [US3] Create .github/workflows/ci.yml — PR 품질 게이트 (ubuntu-latest, Node.js 20 LTS):
+- [X] T030 [US3] Create .github/workflows/ci.yml — PR 품질 게이트 (ubuntu-latest, Node.js 20 LTS):
   - npm ci → npm run build → tsc --noEmit (타입 검사, FR-016)
   - npm run test (Vitest, FR-016)
   - supabase/setup-cli Action으로 로컬 Supabase 시작, npx supabase db reset
@@ -204,11 +204,11 @@
   - npm run test:e2e (Playwright E2E + axe 스캔, FR-009, FR-016, SC-007)
   - grep -r "SUPABASE_SERVICE_ROLE_KEY" .next/static/ → 발견 시 exit 1 (FR-018)
   - 실패 시 PR 차단 (병합 차단 규칙은 GitHub 저장소 설정에서 별도 적용)
-- [ ] T031 [P] [US3] Create .github/workflows/perf.yml — Vercel 미리보기 배포 완료 후 Lighthouse CI 측정:
+- [X] T031 [P] [US3] Create .github/workflows/perf.yml — Vercel 미리보기 배포 완료 후 Lighthouse CI 측정:
   - deployment_status webhook (또는 vercel-action) 으로 미리보기 URL 획득
   - `lhci collect --url=$PREVIEW_URL` 로 URL 주입 후 Lighthouse CI 실행 (FR-020)
   - 결과 기록만, PR 차단 없음 (S0 성능 예산 미등록, FR-017)
-- [ ] T032 [P] [US3] Create lighthouserc.json — Lighthouse CI 설정:
+- [X] T032 [P] [US3] Create lighthouserc.json — Lighthouse CI 설정:
   - collect.url: 미기입 (perf.yml에서 `--url=$PREVIEW_URL`로 주입)
   - assert: 없음 (S0 성능 예산 미등록)
   - upload.target: temporary-public-storage

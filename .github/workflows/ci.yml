@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 체크아웃 & Node.js ──────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 타입 검사 + 빌드 (FR-016) ───────────────────────────────────────────
+      - name: Build
+        run: npm run build
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      # ── 서버 키 번들 포함 여부 스캔 (FR-018) ────────────────────────────────
+      - name: Security — scan for service key in client bundle
+        run: |
+          if grep -rl "SUPABASE_SERVICE_ROLE_KEY" .next/static/ 2>/dev/null | grep -q .; then
+            echo "Security violation: SUPABASE_SERVICE_ROLE_KEY found in client bundle"
+            exit 1
+          fi
+          echo "Security scan passed"
+
+      # ── 단위 테스트 Vitest (FR-016) ─────────────────────────────────────────
+      - name: Unit tests (Vitest)
+        run: npm run test
+
+      # ── 로컬 Supabase 시작 ───────────────────────────────────────────────────
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Apply migrations
+        run: npx supabase db reset --local
+
+      # ── 시드 데이터 주입 (U1: .env.test.local은 gitignore, 직접 추출) ────────
+      - name: Inject Supabase env and seed
+        run: |
+          SERVICE_KEY=$(npx supabase status --output env | grep '^SERVICE_ROLE_KEY=' | cut -d'=' -f2-)
+          SUPABASE_URL=http://localhost:54321 \
+          SUPABASE_SERVICE_ROLE_KEY="$SERVICE_KEY" \
+          npx tsx scripts/seed.ts
+
+      # ── E2E + axe 접근성 (FR-009, FR-016, SC-007) ───────────────────────────
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E tests (Playwright + axe)
+        run: npm run test:e2e
+        env:
+          CI: "true"

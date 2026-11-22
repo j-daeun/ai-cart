@@ -1,0 +1,33 @@
+name: Perf
+
+# Vercel 미리보기 배포 완료 후 Lighthouse CI 측정 (FR-020)
+# 결과 기록만 — S0 성능 예산 미등록이므로 PR 차단 없음 (FR-017)
+on:
+  deployment_status:
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    # Vercel Preview 배포가 성공했을 때만 실행
+    if: >
+      github.event.deployment_status.state == 'success' &&
+      contains(github.event.deployment.environment, 'Preview')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      - name: Run Lighthouse CI
+        run: |
+          lhci collect --url="${{ github.event.deployment_status.target_url }}" \
+            --config=lighthouserc.json
+          lhci upload --config=lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
