@@ -64,8 +64,8 @@ test.describe("공통 레이아웃", () => {
     // 404 heading 존재
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-    // 홈으로 돌아가는 링크 href="/"
-    const homeLink = page.getByRole("link", { name: /홈/ });
+    // 홈으로 돌아가는 링크 — "AI Cart 홈"(헤더)과 구분하기 위해 exact 텍스트 지정
+    const homeLink = page.getByRole("link", { name: "홈으로 돌아가기" });
     await expect(homeLink).toHaveAttribute("href", "/");
   });
 
