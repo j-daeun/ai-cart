@@ -44,8 +44,8 @@
 
 **목적**: Supabase CLI 초기화, 5개 테이블 스키마와 RLS 정책 마이그레이션 파일 작성, 서버/클라이언트 Supabase 클라이언트 분리. US1·US5의 전제 조건.
 
-- [ ] T011 Run `npx supabase init` in repo root — supabase/config.toml 생성 (C1: `npx supabase start`, `npx supabase db reset`, CI supabase/setup-cli Action 모두 config.toml 필요; T012보다 먼저 실행 필수)
-- [ ] T012 Create supabase/migrations/20261121000000_initial_schema.sql — 5 tables (images, products, option_groups, option_values, stocks), indexes, RLS policies per data-model.md:
+- [X] T011 Run `npx supabase init` in repo root — supabase/config.toml 생성 (C1: `npx supabase start`, `npx supabase db reset`, CI supabase/setup-cli Action 모두 config.toml 필요; T012보다 먼저 실행 필수)
+- [X] T012 Create supabase/migrations/20261121000000_initial_schema.sql — 5 tables (images, products, option_groups, option_values, stocks), indexes, RLS policies per data-model.md:
   - images: id uuid PK DEFAULT gen_random_uuid(), storage_path text NOT NULL UNIQUE, public_url text NOT NULL, type text NOT NULL CHECK (type IN ('thumbnail','detail')), size_bytes int NOT NULL, created_at timestamptz NOT NULL DEFAULT now()
   - products: id uuid PK, name text NOT NULL (1~100자 극단값 포함), price int NOT NULL (1000~2000000), category text NOT NULL CHECK IN ('tops','bottoms','outerwear','shoes','bags','accessories'), attributes jsonb NOT NULL ({season:[], material:string, style:string}), thumbnail_image_id uuid NOT NULL REFERENCES images(id), detail_image_id uuid REFERENCES images(id), sort_order int NOT NULL UNIQUE, created_at timestamptz
   - option_groups: id uuid PK, product_id uuid NOT NULL REFERENCES products ON DELETE CASCADE, name text NOT NULL, display_order int NOT NULL, UNIQUE(product_id, display_order)
@@ -53,9 +53,9 @@
   - stocks: id uuid PK, product_id uuid NOT NULL REFERENCES products ON DELETE CASCADE, option_value_ids uuid[] NOT NULL DEFAULT '{}', quantity int NOT NULL DEFAULT 0 CHECK (quantity >= 0), UNIQUE(product_id, option_value_ids)
   - Indexes: idx_products_sort_order, idx_products_category, idx_products_attributes (GIN), idx_option_groups_product_id, idx_option_values_group_id, idx_stocks_product_id, idx_stocks_option_value_ids (GIN)
   - RLS: ENABLE ROW LEVEL SECURITY + CREATE POLICY "public read" FOR SELECT USING (true) on all 5 tables
-- [ ] T013 [P] Create src/lib/supabase/client.ts — browser client using createBrowserClient from @supabase/ssr, NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY only (FR-021)
-- [ ] T014 [P] Create src/lib/supabase/server.ts — server-only client using createServerClient from @supabase/ssr with SUPABASE_SERVICE_ROLE_KEY; for Server Components and API Routes only; add comment "서버 전용 — 클라이언트 코드에서 import 금지" (FR-021)
-- [ ] T015 Create docs/measurements/config.json — { "cpu_slowdown_multiplier": null, "device_model": null, "browser_version_at_first_measurement": null } (Constitution 원칙 II, FR-010)
+- [X] T013 [P] Create src/lib/supabase/client.ts — browser client using createBrowserClient from @supabase/ssr, NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY only (FR-021)
+- [X] T014 [P] Create src/lib/supabase/server.ts — server-only client using createServerClient from @supabase/ssr with SUPABASE_SERVICE_ROLE_KEY; for Server Components and API Routes only; add comment "서버 전용 — 클라이언트 코드에서 import 금지" (FR-021)
+- [X] T015 Create docs/measurements/config.json — { "cpu_slowdown_multiplier": null, "device_model": null, "browser_version_at_first_measurement": null } (Constitution 원칙 II, FR-010)
 
 **검증**: `npx supabase db push`로 원격 DB 마이그레이션 적용, Supabase 대시보드에서 5개 테이블·7개 인덱스·RLS 정책 확인
 
@@ -67,11 +67,11 @@
 
 **Independent Test**: 빈 DB에서 `npm run seed:local` 2회 실행 → `npm run seed:verify:local -- --compare`로 완전 일치 확인.
 
-- [ ] T016 [US1] Create scripts/generate-images.ts — sharp로 이미지 파일 생성:
+- [X] T016 [US1] Create scripts/generate-images.ts — sharp로 이미지 파일 생성:
   - 썸네일 200장: 800×800 JPEG 95% 품질, 카테고리별 단색 배경, 파일명 thumbnails/thumb-{000-199}.jpg (3자리 zero-padded)
   - 긴 상세 15장: 800×5000 JPEG 90% 품질, 파일명 details/detail-{00-14}.jpg (2자리 zero-padded)
   - 로컬 임시 디렉토리에 생성 후 경로 배열 반환 (seed.ts 내부에서 호출)
-- [ ] T017 [US1] Create scripts/seed.ts — main seed script per contracts/seed-cli.md:
+- [X] T017 [US1] Create scripts/seed.ts — main seed script per contracts/seed-cli.md:
   - faker.seed(42), SEED_VALUE env var로 재정의 가능 (FR-002)
   - SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY로 service role 클라이언트 연결
   - 버킷 "product-images" 생성: 멱등 (존재하면 건너뜀) (D-007)
@@ -86,7 +86,7 @@
   - stocks.option_value_ids: group display_order 오름차순 정렬 보장, UNIQUE(product_id, option_value_ids)
   - 원자성: 오류 시 TRUNCATE images, products, option_groups, option_values, stocks CASCADE로 롤백 (FR-008)
   - stdout 진행 출력 (seed-cli.md 형식), stderr 오류 출력, 종료 코드 0/1
-- [ ] T018 [US1] Create scripts/seed-verify.ts — 시드 검증 스크립트:
+- [X] T018 [US1] Create scripts/seed-verify.ts — 시드 검증 스크립트:
   - `npm run seed:verify`: products 100,000건 카운트 + 모든 상품에 thumbnail_image_id 연결 확인 (SC-001 간접 검증)
   - `--compare` flag: seed 2회 실행 후 products 전체 필드 값·순서 비교 → 100% 일치 확인 (SC-002)
 
@@ -103,20 +103,20 @@
 
 **Independent Test**: `npm run build && npm start`, 360px 너비로 접속 → skip nav 동작, AI Cart 홈 링크, 비활성 장바구니 버튼, 존재하지 않는 경로에서 404 화면 확인.
 
-- [ ] T019 [US5] Create src/components/layout/SkipNav.tsx — "본문으로 건너뛰기" skip nav:
+- [X] T019 [US5] Create src/components/layout/SkipNav.tsx — "본문으로 건너뛰기" skip nav:
   - 평소 화면 밖 위치 (sr-only 또는 absolute -top-full), focus 시 화면에 표시
   - href="#main-content"로 이동 (FR-024)
   - accessible name: "본문으로 건너뛰기"
-- [ ] T020 [US5] Create src/components/layout/Header.tsx — 헤더 컴포넌트:
+- [X] T020 [US5] Create src/components/layout/Header.tsx — 헤더 컴포넌트:
   - `<a href="/">` AI Cart 홈 링크 — accessible name "AI Cart 홈" (FR-022, FR-024)
   - `<button aria-disabled="true" aria-label="장바구니">` — 시각적으로 흐리게 (opacity-50 또는 동등), onClick={undefined}, 포커스 가능 (FR-022)
   - 클릭해도 아무 동작 없음; 실제 동작·수량 표시는 S3에서 추가
-- [ ] T021 [US5] Create src/app/layout.tsx — Root Layout:
+- [X] T021 [US5] Create src/app/layout.tsx — Root Layout:
   - `<SkipNav />`, `<Header />`, `<main id="main-content">`, `{children}`
   - Tailwind: min-w-[360px], 데스크톱에서 max-w-[480px] mx-auto (모바일 레이아웃 가운데 정렬) (FR-023)
   - lang="ko" on <html>
-- [ ] T022 [US5] Create src/app/page.tsx — 홈 placeholder (텍스트 "상품 목록 준비 중 — S1에서 추가 예정", S1에서 교체)
-- [ ] T023 [US5] Create src/app/not-found.tsx — 404 화면:
+- [X] T022 [US5] Create src/app/page.tsx — 홈 placeholder (텍스트 "상품 목록 준비 중 — S1에서 추가 예정", S1에서 교체)
+- [X] T023 [US5] Create src/app/not-found.tsx — 404 화면:
   - 공통 레이아웃(layout.tsx) 안에 렌더링됨
   - 안내 문구 + `<a href="/">` 홈으로 가는 링크 (FR-025)
 
@@ -135,7 +135,7 @@
 
 **Independent Test**: `npm run build && npm start` 후 `npm run measure -- --url http://localhost:3000 --spec 000-foundation --page layout --scenario page-load --force-prod` → docs/measurements/000-foundation.json에 세트 1개 추가, FR-014의 8항목 모두 포함 확인.
 
-- [ ] T024 [US2] Create scripts/measure.ts — per contracts/measure-cli.md:
+- [X] T024 [US2] Create scripts/measure.ts — per contracts/measure-cli.md:
   - CLI args 파싱: --url (required), --spec (required), --page, --scenario (default: page-load), --runs (default: 3), --force-prod
   - 사전 조건: docs/measurements/config.json의 cpu_slowdown_multiplier != null; localhost URL + --force-prod 없으면 "Error: Production build required." 출력 후 exit 1 (FR-013)
   - config.json에서 cpu_slowdown_multiplier, device_model, browser_version 읽기
