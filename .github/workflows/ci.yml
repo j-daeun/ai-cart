@@ -55,8 +55,29 @@ jobs:
       # ── 시드 데이터 주입 (U1: .env.test.local은 gitignore, 직접 추출) ────────
       - name: Inject Supabase env and seed
         run: |
-          SERVICE_KEY=$(npx supabase status --output env | grep '^SERVICE_ROLE_KEY=' | cut -d'=' -f2-)
-          SUPABASE_URL=http://localhost:54321 \
+          # --output json + jq -r 로 따옴표 없는 순수 값 추출
+          STATUS=$(npx supabase status --output json) || {
+            echo "Error: supabase status --output json failed"
+            exit 1
+          }
+          SERVICE_KEY=$(echo "$STATUS" | jq -r '.SERVICE_ROLE_KEY')
+          API_URL=$(echo "$STATUS" | jq -r '.API_URL')
+
+          # 키 유효성 검사 (값 자체는 로그에 출력하지 않음)
+          if [ -z "$SERVICE_KEY" ] || [ "$SERVICE_KEY" = "null" ]; then
+            echo "Error: SERVICE_ROLE_KEY is empty or missing in supabase status output"
+            exit 1
+          fi
+          if [[ "$SERVICE_KEY" == '"'* ]]; then
+            echo "Error: SERVICE_ROLE_KEY starts with a quote — jq parsing failed"
+            exit 1
+          fi
+          if [ -z "$API_URL" ] || [ "$API_URL" = "null" ]; then
+            echo "Error: API_URL is empty or missing in supabase status output"
+            exit 1
+          fi
+
+          SUPABASE_URL="$API_URL" \
           SUPABASE_SERVICE_ROLE_KEY="$SERVICE_KEY" \
           npx tsx scripts/seed.ts
 
