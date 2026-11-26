@@ -38,3 +38,4 @@ playwright-report/
 test-results/
 
 # docs/measurements/ 는 측정 원본 기록이므로 Git 추적 대상 — 포함 안 함 (Clarify Q3, FR-015)
+tsconfig.tsbuildinfo
