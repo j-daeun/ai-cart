@@ -84,9 +84,9 @@
 **목적**: CI 최종 통과 확인 → Checkpoint B (사용자가 기준 환경에서 직접 측정) → 측정 결과 기록
 
 - [X] T021 CI 최종 확인 — `npx tsc --noEmit && npm run test && npm run build` 순차 실행 후 모두 통과. 빌드 성공 확인. (Playwright E2E는 `npm run test:e2e`로 별도 확인)
-- [ ] T022 `specs/001-product-list/verification.md` 작성 — spec.md의 Acceptance Scenarios (US1 5개, US2 5개, US3 2개) + Edge Cases + SC-001–SC-006 각각: 통과/미달/미측정 상태, 근거(테스트 이름 또는 측정 파일명). **[Checkpoint B 측정 후 SC-004 항목 채움]**
-- [ ] T023 `docs/adr/001-product-list.md` 작성 — 형식: 문제(K1 무한 스크롤 성능·위치 소실) · 대안 비교(설계서 K1 기각 대안 그대로) · 선택 이유 · 측정 결과(SC-001·SC-002·SC-004 중앙값, 3회 원값 포함). **[Checkpoint B 측정 후 결과 채움]**
-- [ ] T024 `README.md` 갱신 — 진행 표(S1 행: 완료 표시) · 성능 수치 표(SC-001·SC-002·SC-004 측정 중앙값 기입). **[Checkpoint B 측정 후 작성]**
+- [X] T022 `specs/001-product-list/verification.md` 작성 — spec.md의 Acceptance Scenarios (US1 5개, US2 5개, US3 2개) + Edge Cases + SC-001–SC-006 각각: 통과/미달/미측정 상태, 근거(테스트 이름 또는 측정 파일명). **[Checkpoint B 측정 후 SC-004 항목 채움]**
+- [X] T023 `docs/adr/001-product-list.md` 작성 — 형식: 문제(K1 무한 스크롤 성능·위치 소실) · 대안 비교(설계서 K1 기각 대안 그대로) · 선택 이유 · 측정 결과(SC-001·SC-002·SC-004 중앙값, 3회 원값 포함). **[Checkpoint B 측정 후 결과 채움]**
+- [X] T024 `README.md` 갱신 — 진행 표(S1 행: 완료 표시) · 성능 수치 표(SC-001·SC-002·SC-004 측정 중앙값 기입). **[Checkpoint B 측정 후 작성]**
 
 ---
 

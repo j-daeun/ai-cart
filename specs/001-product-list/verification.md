@@ -66,28 +66,25 @@
 | **SC-001** 렌더링 카드 수 ≤ 뷰포트 카드 수 × 3 | ✅ 통과 | E2E 2건 — 1,000개·5,000개 시점 각각 통과 |
 | **SC-002** 뒤로가기 위치 복원 (50번째 카드 50%+, 재요청 0건) | ✅ 통과 | E2E — `toBeInViewport()` + `productRequests === 0` |
 | **SC-003** 첫 화면 HTML에 상품 포함 | ✅ 통과 | E2E — `page.content()` 에 카드 HTML 확인 |
-| **SC-004** LCP ≤ 2.5초, CLS ≤ 0.1 | ⏳ 미측정 | **Checkpoint B 측정 대기** — 기준 환경(SAMSUNG 900X3L, 프로덕션 빌드)에서 `npm run measure` 실행 후 기록 |
+| **SC-004** LCP ≤ 2.5초, CLS ≤ 0.1 | ❌ LCP 미달 / ✅ CLS 통과 | `docs/measurements/001-product-list.json` — LCP 중앙값 3.973s (목표 2.5s 초과), CLS 0 (목표 이하). 1회 10.02s(콜드 스타트 추정), 2·3회 3.695·3.973s. 원인: 로컬 Supabase 미실행으로 SSR 프리페치 fallback → 클라이언트가 JS 로드 후 첫 요청, Slow 4G + CPU 1.8× 환경에서 LCP 상승. |
 | **SC-005** 접근성 (axe-core 0건, 키보드 탐색·진입) | ✅ 통과 | E2E 2건 — axe-core `wcag2a/2aa/21aa` critical·serious 0건; Tab→Enter → `/products/` URL 확인 |
 | **SC-006** 타입 검사·단위 테스트·E2E CI 통과 | ✅ 통과 | `npx tsc --noEmit` ✅ / `npm run test` ✅ / `npm run test:e2e` 19/19 ✅ / `npm run build` ✅ |
 
 ---
 
-## SC-004 Checkpoint B — 측정 대기
+## SC-004 측정 결과 (Checkpoint B 완료)
 
-기준 환경: **SAMSUNG 900X3L**, 충전기 연결, 다른 프로그램 종료, **프로덕션 빌드**.
+기준 환경: SAMSUNG 900X3L · CPU 1.8× · Slow 4G · 프로덕션 빌드 · 캐시 초기화 · Chrome 158
 
-```bash
-npm.cmd run build
-npm.cmd run start
-npm.cmd run measure -- --url http://localhost:3000 --spec 001-product-list --page product-list --scenario scroll-1000 --force-prod
-```
+| 지표 | 목표 | 중앙값 | 1회 | 2회 | 3회 | 판정 |
+| --- | --- | --- | --- | --- | --- | --- |
+| LCP | ≤ 2.5초 | **3.973s** | 10.02s | 3.695s | 3.973s | ❌ 미달 |
+| CLS | ≤ 0.1 | **0** | 0 | 0 | 0 | ✅ 통과 |
+| TBT | — | 555ms | 704ms | 470ms | 555ms | — |
 
-측정 완료 후 `docs/measurements/001-product-list.json` 결과를 이 파일의 SC-004 행에 기입:
+**원인 추정**: 로컬 Supabase 미실행으로 SSR 프리페치가 graceful fallback하여 클라이언트 첫 요청 LCP가 늦어짐. Slow 4G + CPU 1.8× 환경에서 가중. DB 연결 시 SSR이 정상 작동하면 개선될 것으로 추정.
 
-| 지표 | 목표 | 측정 중앙값 (3회) | 판정 |
-| --- | --- | --- | --- |
-| LCP | ≤ 2.5초 | — | — |
-| CLS | ≤ 0.1 | — | — |
+**대안 비교 측정**: 1차 배포 후 `exp/001-css-content-visibility` 브랜치에서 별도 진행 (ADR 참조).
 
 ---
 
@@ -96,7 +93,7 @@ npm.cmd run measure -- --url http://localhost:3000 --spec 001-product-list --pag
 | 항목 | 결과 |
 | --- | --- |
 | 수용 기준 (US1 + US2 + US3) | ✅ 모두 통과 (19/19 E2E) |
-| 성공 기준 (SC-001~SC-006) | ⏳ SC-004 Checkpoint B 측정 대기; 나머지 ✅ |
+| 성공 기준 (SC-001~SC-006) | SC-004 LCP ❌ 미달 (3.973s / 목표 2.5s); 나머지 ✅ |
 | CI (tsc + test + build) | ✅ 통과 |
 
-**상태**: SC-004 측정 후 완료 처리.
+**상태**: SC-004 LCP 미달로 **미완료**. 나머지 수용·성공 기준은 모두 충족. 1차 배포 후 DB 연결 환경 재측정 권장.
