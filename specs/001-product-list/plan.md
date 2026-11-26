@@ -35,7 +35,7 @@
 **Primary Dependencies**:
 - Next.js 15 (App Router) — Server Component SSR + Route Handler
 - `@tanstack/react-query` v5 — `useInfiniteQuery`, `HydrationBoundary`, `dehydrate` (Constitution 기술 스택 승인)
-- `@tanstack/react-virtual` v3 — 가상화 (**신규**, Checkpoint A 승인 필요)
+- `@tanstack/react-virtual` v3 — 가상화 (**신규**, Checkpoint A 승인됨)
 - Supabase JS v2 (`@supabase/ssr`) — PostgreSQL 조회
 - Tailwind CSS — 스타일링
 
