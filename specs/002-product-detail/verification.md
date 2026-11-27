@@ -27,7 +27,7 @@
 | **SC-006** 기본 검사 (tsc·test·build·E2E) | 모두 통과 | tsc·test·build 통과 | — | — | — | ✅ (E2E 로컬 환경 필요) |
 | **SC-007** S1 스크롤 복원 회귀 없음 | E2E 통과 | E2E 구현 | — | — | — | ✅ |
 
-**SC-001 TBT 미달 원인**: S1 공유 번들(TanStack Query + React Virtual = 103KB First Load JS)이 `/products/[id]`에서도 로드된다. 상세 페이지는 이 라이브러리를 직접 사용하지 않지만 Next.js가 공유 청크로 묶어서 전달. 1.8× CPU throttle + Slow 4G 조건에서 파싱 비용이 TBT에 집중됨.
+**SC-001 TBT 미달 원인 (검증됨)**: `.next/app-build-manifest.json` 분석으로 TanStack Query/React Virtual은 홈페이지 전용 청크(`chunks/141`, `chunks/430`)에만 있고 `/products/[id]`에는 포함되지 않음이 확인됐다. TBT의 실제 원인은 모든 페이지에 공통 로드되는 React DOM(`chunks/4bd`, ~173kB) + Next.js 라우터(`chunks/255`, ~174kB) 등 프레임워크 필수 코드 합계 ~350kB의 파싱 비용이다. 1.8× CPU throttle + Slow 4G 조건에서 이를 파싱하는 시간이 TBT로 나타남. 이 아키텍처 내에서 TBT ≤ 200ms 달성은 어렵고 프레임워크 수준 변경(Preact 교체 등)이 필요하다.
 
 ---
 
