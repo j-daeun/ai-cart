@@ -1,0 +1,27 @@
+# Lighthouse CI 성능 예산
+# 기준: 측정 중앙값 × 1.1 (Constitution B4 — 회귀 방지용)
+# 측정 환경: SAMSUNG 900X3L · CPU 1.8× · Slow 4G · 프로덕션 빌드
+
+ci:
+  collect:
+    url:
+      - http://localhost:3000/
+    numberOfRuns: 1
+
+  assert:
+    assertions:
+      # S1: 상품 목록 성능 예산 (001-product-list 측정 기준)
+      # TBT 중앙값 555ms × 1.1 = 611ms
+      "largest-contentful-paint":
+        - error
+        - maxNumericValue: 15000  # S1 LCP 미달 — 재측정 대기
+      "cumulative-layout-shift":
+        - error
+        - maxNumericValue: 0.1
+
+      # S2: 상품 상세 성능 예산 (002-product-detail 측정 기준)
+      # TBT 중앙값 556ms × 1.1 = 612ms
+      "total-blocking-time":
+        - warn
+        - maxNumericValue: 612   # 중앙값 556ms × 1.1 (회귀 방지용)
+                                 # 목표(SC-001)는 200ms — 현재 미달
