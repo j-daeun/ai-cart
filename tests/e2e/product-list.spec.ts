@@ -336,14 +336,16 @@ test.describe("SC-002 스크롤 위치 복원", () => {
     // 뒤로가기
     await page.goBack();
     await page.waitForURL("/");
-    await page.waitForTimeout(500);
+    // ProductListContainer mount + scroll 복원 완료 대기 (waitForTimeout 대신 명시적 대기)
+    await page.waitForSelector('[data-testid="product-card"]', { timeout: 10000 });
+    await page.waitForTimeout(300); // scroll settle 여유
 
     // 목록 재요청 0건
     expect(productRequests).toBe(0);
 
     // 카드가 뷰포트 안에 있는지 확인
     const restoredCard = page.locator('[data-testid="product-card"]').first();
-    await expect(restoredCard).toBeInViewport();
+    await expect(restoredCard).toBeInViewport({ timeout: 5000 });
   });
 });
 
