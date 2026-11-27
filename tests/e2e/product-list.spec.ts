@@ -295,33 +295,30 @@ test.describe("SC-002 스크롤 위치 복원", () => {
     await page.goto("/");
     await page.waitForSelector('[data-testid="product-card"]');
 
-    // 50번째 카드까지 스크롤
-    await page.evaluate(
-      (height) => {
-        const container = document.querySelector<HTMLElement>(
-          '[aria-label="상품 목록"]'
-        );
-        if (container) container.scrollTop = 50 * height;
-      },
-      ESTIMATE_CARD_HEIGHT
-    );
-    await page.waitForTimeout(500);
-
-    // 50번째 카드 클릭
-    const cards = page.locator('[data-testid="product-card"]');
-    // 가상화로 인해 50번째 카드가 DOM에 있을 수도 없을 수도 있으므로
-    // data-index="50"을 가진 카드를 찾음
-    const targetCard = page.locator('[data-testid="product-card"][data-index="50"]');
-
-    // 카드가 없으면 visible한 첫 번째 카드 클릭 (스크롤 후 뷰포트에 있는 카드)
-    const targetExists = await targetCard.count();
-    if (targetExists > 0) {
-      // 상세 진입 직전 scrollY 기록
-      await targetCard.click();
-    } else {
-      const firstVisible = cards.first();
-      await firstVisible.click();
+    // 50번째 카드까지 단계별 스크롤 —
+    // 한 번에 5200 설정 시 초기 totalHeight(20개×104=2080)로 클램프되어
+    // data-index="50"이 DOM에 없는 fallback 경로를 탄다.
+    // 단계적으로 스크롤해 IntersectionObserver를 반복 트리거,
+    // 충분한 아이템(60개+)이 로드된 뒤 최종 위치 5200에 도달한다.
+    for (const stepScroll of [2000, 3500, 50 * ESTIMATE_CARD_HEIGHT]) {
+      await page.evaluate(
+        (top) => {
+          const container = document.querySelector<HTMLElement>(
+            '[aria-label="상품 목록"]'
+          );
+          if (container) container.scrollTop = top;
+        },
+        stepScroll
+      );
+      await page.waitForTimeout(600);
     }
+
+    // 50번째 카드가 뷰포트에 보일 때까지 대기 후 클릭
+    const targetCard = page.locator(
+      '[data-testid="product-card"][data-index="50"]'
+    );
+    await targetCard.waitFor({ state: "visible", timeout: 10000 });
+    await targetCard.click();
 
     // 상세 화면 도착 확인
     await page.waitForURL(/\/products\//);
