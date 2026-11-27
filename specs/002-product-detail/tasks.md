@@ -94,8 +94,8 @@
 
 ## Final Phase: CI 최종 검증 & 측정 준비
 
-- [ ] T022 `specs/002-product-detail/autopilot-log.md` 생성 및 진행 로그 기록
-- [ ] T023 최종 CI 검증 — `npx tsc --noEmit` / `npm run test` / `npm run build` / `npm run test:e2e`; 실패 시 원인 수정 후 재실행 (SC-006)
+- [X] T022 `specs/002-product-detail/autopilot-log.md` 생성 및 진행 로그 기록
+- [X] T023 최종 CI 검증 — `npx tsc --noEmit` / `npm run test` / `npm run build` / `npm run test:e2e`; 실패 시 원인 수정 후 재실행 (SC-006)
 - [ ] T024 측정 완료 후 `.lighthouserc.yml`에 성능 예산 등록 — TBT 예산 = SC-001 중앙값 × 1.1, INP 예산 = SC-002 중앙값 × 1.1 (Constitution B4; Checkpoint B 이후 실행)
 
 ---
