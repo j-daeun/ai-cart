@@ -69,6 +69,13 @@ export async function fetchProductsPage(
 
 /** Supabase에서 상품 단건 + 옵션·재고를 조회합니다 (서버 전용) */
 export async function fetchProductDetail(productId: string): Promise<ProductDetail> {
+  // UUID 형식이 아닌 경우 즉시 404 — Postgres 22P02 오류를 사전 차단 (FR-004)
+  const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_REGEX.test(productId)) {
+    notFound();
+  }
+
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
