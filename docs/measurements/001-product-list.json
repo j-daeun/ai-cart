@@ -1,0 +1,43 @@
+{
+  "sets": [
+    {
+      "spec_id": "S1",
+      "page": "product-list",
+      "scenario": "scroll-1000",
+      "measured_at": "2026-11-26T22:28:53.957Z",
+      "commit": "25906f8",
+      "url": "http://localhost:3000",
+      "browser_version": "Chrome 158.0.0.0",
+      "cpu_slowdown_multiplier": 1.8,
+      "network_profile": "Slow 4G",
+      "data_scale": "products:100000",
+      "cache": "cleared",
+      "runs": [
+        {
+          "lcp": 10.02,
+          "cls": 0,
+          "tbt": 704,
+          "js_bytes": 143511
+        },
+        {
+          "lcp": 3.695,
+          "cls": 0,
+          "tbt": 470,
+          "js_bytes": 143511
+        },
+        {
+          "lcp": 3.973,
+          "cls": 0,
+          "tbt": 555,
+          "js_bytes": 143511
+        }
+      ],
+      "median": {
+        "lcp": 3.973,
+        "cls": 0,
+        "tbt": 555,
+        "js_bytes": 143511
+      }
+    }
+  ]
+}

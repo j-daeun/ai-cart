@@ -44,7 +44,9 @@ jobs:
       # ── 로컬 Supabase 시작 ───────────────────────────────────────────────────
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Start local Supabase
         run: npx supabase start

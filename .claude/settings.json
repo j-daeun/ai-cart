@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm.cmd run *)",
+      "Bash(npx tsc)",
+      "Bash(npx tsc *)",
+      "Bash(npx playwright *)",
+      "Bash(npx vitest)",
+      "Bash(npx vitest *)",
+      "Bash(npx supabase status)",
+      "Bash(npx supabase status *)",
+      "Bash(npx supabase start)",
+      "Bash(npx supabase start *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git tag)",
+      "Bash(git tag *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log)",
+      "Bash(git log *)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(npx supabase db push*)",
+      "Bash(*--remote*)",
+      "Bash(npm run seed)",
+      "Bash(npm run seed *)",
+      "Bash(npm run seed:verify)",
+      "Bash(npm run seed:verify *)",
+      "Bash(npm.cmd run seed)",
+      "Bash(npm.cmd run seed *)",
+      "Bash(npm.cmd run seed:verify)",
+      "Bash(npm.cmd run seed:verify *)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ]
+  }
+}
