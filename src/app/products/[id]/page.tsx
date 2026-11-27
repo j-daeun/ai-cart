@@ -1,4 +1,5 @@
 import { fetchProductDetail } from "@/lib/products/queries";
+import ProductDetailInteractive from "@/components/product-detail/ProductDetailInteractive";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,6 +34,12 @@ export default async function ProductDetailPage({ params }: Props) {
           목록으로
         </a>
       </div>
+
+      {/* 옵션 선택 + 구매·장바구니 버튼 (US2·US4) — Client Component */}
+      <ProductDetailInteractive
+        optionGroups={product.optionGroups}
+        stocks={product.stocks}
+      />
 
       {/* 긴 상세 이미지 — detailImageUrl이 없으면 렌더링 안 함 (FR-002) */}
       {product.detailImageUrl && (
