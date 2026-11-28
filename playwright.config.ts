@@ -44,7 +44,7 @@ export default defineConfig({
     //   원격 Supabase에 붙지 않음.
     command: process.env.CI
       ? "npm run start"
-      : "dotenv -e .env.test.local -- npm run dev",
+      : "npm run dev:test",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 300_000, // Windows dev 서버 초기 컴파일 여유 (120s → 300s)
