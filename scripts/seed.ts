@@ -93,11 +93,16 @@ async function main() {
   }
 
   // 기존 데이터가 있으면 초기화 (멱등성)
-  const { count: existingCount } = await supabase
+  // images도 확인: 이전 실행이 products 삽입 전에 실패/롤백하면 products=0이지만
+  // images 행이 남아 storage_path unique 제약 위반 발생.
+  const { count: existingProductCount } = await supabase
     .from("products")
     .select("*", { count: "exact", head: true });
-  if (existingCount && existingCount > 0) {
-    console.log(`[seed] Existing data found (${existingCount} products). Truncating...`);
+  const { count: existingImageCount } = await supabase
+    .from("images")
+    .select("*", { count: "exact", head: true });
+  if ((existingProductCount && existingProductCount > 0) || (existingImageCount && existingImageCount > 0)) {
+    console.log(`[seed] Existing data found (${existingProductCount ?? 0} products, ${existingImageCount ?? 0} images). Truncating...`);
     for (const table of ["stocks", "option_values", "option_groups", "products", "images"] as const) {
       await supabase.from(table).delete().neq("id", "00000000-0000-0000-0000-000000000000");
     }
