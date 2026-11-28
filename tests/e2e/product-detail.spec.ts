@@ -345,10 +345,12 @@ test.describe("[US5] S8. S1 스크롤 복원 회귀 없음", () => {
     await page.waitForSelector("[data-testid='product-card']", { timeout: 10_000 }).catch(() => {
       // testid 없으면 링크로 대체
     });
-    // 충분히 스크롤 (50번째 상품 위치 근사)
-    await page.evaluate(() => window.scrollTo(0, 5000));
+    // 컨테이너 스크롤: S1은 window scroll이 아닌 [aria-label="상품 목록"] container.scrollTop 기반
+    await page.evaluate(() => {
+      const container = document.querySelector('[aria-label="상품 목록"]');
+      if (container) container.scrollTop = 2000;
+    });
     await page.waitForTimeout(500);
-    const scrollBefore = await page.evaluate(() => window.scrollY);
 
     // 상세로 이동
     const card = page.getByRole("link").filter({ hasText: /원/ }).first();
@@ -359,8 +361,13 @@ test.describe("[US5] S8. S1 스크롤 복원 회귀 없음", () => {
       await page.goBack();
       // 스크롤 복원 대기
       await page.waitForTimeout(500);
-      const scrollAfter = await page.evaluate(() => window.scrollY);
-      // 스크롤이 어느 정도 복원되어야 함 (0이 아님)
+      const scrollAfter = await page.evaluate(() => {
+        return (
+          document.querySelector<HTMLElement>('[aria-label="상품 목록"]')
+            ?.scrollTop ?? 0
+        );
+      });
+      // 컨테이너 스크롤이 복원되어야 함 (0이 아님)
       expect(scrollAfter).toBeGreaterThan(0);
     }
   });
