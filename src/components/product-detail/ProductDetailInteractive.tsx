@@ -28,11 +28,13 @@ export default function ProductDetailInteractive({
     <form autoComplete="off" className="p-4">
       {/* 옵션 그룹 목록 (FR-008·FR-009·FR-018) */}
       {optionGroups.map((group) => (
-        <fieldset key={group.id} className="mb-4">
+        // role="radiogroup": <fieldset>의 암묵적 role은 "group" — Playwright getByRole("radiogroup")이 찾으려면 명시 필요
+        <fieldset key={group.id} className="mb-4" role="radiogroup">
           <legend className="font-semibold mb-2">{group.name}</legend>
           <div className="flex flex-wrap gap-2">
             {group.options.map((option) => (
-              <span key={option.id}>
+              // relative: 내부 absolute input의 기준점
+              <span key={option.id} className="relative">
                 <input
                   type="radio"
                   id={`opt-${option.id}`}
@@ -46,7 +48,10 @@ export default function ProductDetailInteractive({
                       [group.id]: option.id,
                     }))
                   }
-                  className="sr-only"
+                  // appearance-none + absolute 1px: sr-only의 clip:rect(0,0,0,0)은
+                  // Playwright checkVisibility()를 false로 만들어 check()가 타임아웃됨.
+                  // clip 없는 1px 절대위치 요소는 checkVisibility()=true → 정상 조작 가능.
+                  className="absolute appearance-none w-px h-px top-0 left-0"
                 />
                 <label
                   htmlFor={`opt-${option.id}`}

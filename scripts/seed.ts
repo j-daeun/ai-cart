@@ -526,12 +526,24 @@ async function main() {
           combinations = newCombinations;
         }
 
+        // partiallySoldOut: 첫 번째 그룹의 첫 번째 값(valueId)이 포함된 조합을 전부 품절로 처리.
+        // cIdx===0만 품절로 하면 isOptionValueSoldOut이 "해당 값 포함 조합이 모두 0"을 요구하므로
+        // 같은 값을 가진 다른 조합(예: 색상0+사이즈1)이 재고 있으면 품절 표시가 안 됨.
+        const firstGroupId = groupIdMap.get(`${spec.productId}:1`);
+        const firstGroupFirstValueId = firstGroupId
+          ? valueIdMap.get(`${firstGroupId}:1`)
+          : undefined;
+
         for (let cIdx = 0; cIdx < combinations.length; cIdx++) {
           let quantity: number;
           if (spec.soldOut) {
             quantity = 0;
-          } else if (spec.partiallySoldOut && cIdx === 0) {
-            // 첫 번째 조합만 품절
+          } else if (
+            spec.partiallySoldOut &&
+            firstGroupFirstValueId !== undefined &&
+            combinations[cIdx].includes(firstGroupFirstValueId)
+          ) {
+            // 첫 번째 그룹의 첫 번째 옵션값이 포함된 조합은 모두 품절
             quantity = 0;
           } else {
             quantity = faker.number.int({ min: 1, max: 100 });

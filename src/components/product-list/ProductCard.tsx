@@ -24,7 +24,7 @@ export default function ProductCard({ item, index, onCardClick }: Props) {
       data-testid="product-card"
       data-index={index}
       onClick={() => onCardClick(index)}
-      className={`flex gap-3 p-3 ${isSoldOut ? "opacity-60" : ""}`}
+      className="flex gap-3 p-3"
     >
       <div className="relative w-20 h-20 shrink-0 bg-gray-100 rounded overflow-hidden">
         {thumbnailUrl ? (
@@ -40,7 +40,8 @@ export default function ProductCard({ item, index, onCardClick }: Props) {
         )}
         {isSoldOut && (
           <div
-            className="absolute inset-0 flex items-center justify-center bg-black/40"
+            // bg-black/50: opacity-60 전체적용 대신 이미지 오버레이만 어둡게 — WCAG AA 텍스트 대비 유지
+            className="absolute inset-0 flex items-center justify-center bg-black/50"
             aria-hidden="true"
           >
             <span className="text-white text-xs font-semibold">품절</span>
@@ -48,8 +49,9 @@ export default function ProductCard({ item, index, onCardClick }: Props) {
         )}
       </div>
       <div className="flex flex-col justify-center min-w-0">
-        <p className="text-sm font-medium truncate">{name}</p>
-        <p className="text-sm text-gray-800">{formattedPrice}원</p>
+        {/* text-gray-600(#4B5563): white 배경 대비 6.33:1 — WCAG AA 충족. opacity-60은 ~4.07:1로 미달 */}
+        <p className={`text-sm font-medium truncate ${isSoldOut ? "text-gray-600" : ""}`}>{name}</p>
+        <p className={`text-sm ${isSoldOut ? "text-gray-600" : "text-gray-800"}`}>{formattedPrice}원</p>
       </div>
     </Link>
   );
