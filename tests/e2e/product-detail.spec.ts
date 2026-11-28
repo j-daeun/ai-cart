@@ -350,16 +350,19 @@ test.describe("[US5] S8. S1 스크롤 복원 회귀 없음", () => {
       const container = document.querySelector('[aria-label="상품 목록"]');
       if (container) container.scrollTop = 2000;
     });
-    await page.waitForTimeout(500);
+    // IntersectionObserver 트리거 + page 2 로드 여유 (scrollTop=2000 → sentinel 감지)
+    await page.waitForTimeout(1000);
 
-    // 상세로 이동
-    const card = page.getByRole("link").filter({ hasText: /원/ }).first();
-    if (await card.isVisible()) {
-      await card.click();
+    // 상세로 이동: .first()는 DOM 상 첫 요소(뷰포트 위)를 잡아 Playwright가 역스크롤함.
+    // scrollTop=2000 뷰포트 안에 있는 index=20 카드를 명시적으로 클릭.
+    const targetCard = page.locator('[data-testid="product-card"][data-index="20"]');
+    if (await targetCard.isVisible()) {
+      await targetCard.click();
       await expect(page).toHaveURL(/\/products\/.+/);
       // 뒤로가기
       await page.goBack();
-      // 스크롤 복원 대기
+      // ProductListContainer mount + 스크롤 복원 effect 완료 대기
+      await page.waitForSelector("[data-testid='product-card']", { timeout: 10_000 }).catch(() => {});
       await page.waitForTimeout(500);
       const scrollAfter = await page.evaluate(() => {
         return (

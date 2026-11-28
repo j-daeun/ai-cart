@@ -131,7 +131,7 @@ export default function ProductList({
   return (
     <div
       ref={containerRef}
-      style={{ height: "100dvh", overflowY: "auto" }}
+      style={{ height: "100%", overflowY: "auto" }}
       aria-label="상품 목록"
     >
       {/* 접근성: 로딩 상태 — FR-015 */}
