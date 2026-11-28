@@ -93,11 +93,16 @@ async function main() {
   }
 
   // 기존 데이터가 있으면 초기화 (멱등성)
-  const { count: existingCount } = await supabase
+  // images도 확인: 이전 실행이 products 삽입 전에 실패/롤백하면 products=0이지만
+  // images 행이 남아 storage_path unique 제약 위반 발생.
+  const { count: existingProductCount } = await supabase
     .from("products")
     .select("*", { count: "exact", head: true });
-  if (existingCount && existingCount > 0) {
-    console.log(`[seed] Existing data found (${existingCount} products). Truncating...`);
+  const { count: existingImageCount } = await supabase
+    .from("images")
+    .select("*", { count: "exact", head: true });
+  if ((existingProductCount && existingProductCount > 0) || (existingImageCount && existingImageCount > 0)) {
+    console.log(`[seed] Existing data found (${existingProductCount ?? 0} products, ${existingImageCount ?? 0} images). Truncating...`);
     for (const table of ["stocks", "option_values", "option_groups", "products", "images"] as const) {
       await supabase.from(table).delete().neq("id", "00000000-0000-0000-0000-000000000000");
     }
@@ -526,12 +531,24 @@ async function main() {
           combinations = newCombinations;
         }
 
+        // partiallySoldOut: 첫 번째 그룹의 첫 번째 값(valueId)이 포함된 조합을 전부 품절로 처리.
+        // cIdx===0만 품절로 하면 isOptionValueSoldOut이 "해당 값 포함 조합이 모두 0"을 요구하므로
+        // 같은 값을 가진 다른 조합(예: 색상0+사이즈1)이 재고 있으면 품절 표시가 안 됨.
+        const firstGroupId = groupIdMap.get(`${spec.productId}:1`);
+        const firstGroupFirstValueId = firstGroupId
+          ? valueIdMap.get(`${firstGroupId}:1`)
+          : undefined;
+
         for (let cIdx = 0; cIdx < combinations.length; cIdx++) {
           let quantity: number;
           if (spec.soldOut) {
             quantity = 0;
-          } else if (spec.partiallySoldOut && cIdx === 0) {
-            // 첫 번째 조합만 품절
+          } else if (
+            spec.partiallySoldOut &&
+            firstGroupFirstValueId !== undefined &&
+            combinations[cIdx].includes(firstGroupFirstValueId)
+          ) {
+            // 첫 번째 그룹의 첫 번째 옵션값이 포함된 조합은 모두 품절
             quantity = 0;
           } else {
             quantity = faker.number.int({ min: 1, max: 100 });

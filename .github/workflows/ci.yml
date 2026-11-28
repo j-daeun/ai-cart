@@ -64,6 +64,7 @@ jobs:
           }
           SERVICE_KEY=$(echo "$STATUS" | jq -r '.SERVICE_ROLE_KEY')
           API_URL=$(echo "$STATUS" | jq -r '.API_URL')
+          ANON_KEY=$(echo "$STATUS" | jq -r '.ANON_KEY')
 
           # 키 유효성 검사 (값 자체는 로그에 출력하지 않음)
           if [ -z "$SERVICE_KEY" ] || [ "$SERVICE_KEY" = "null" ]; then
@@ -78,6 +79,11 @@ jobs:
             echo "Error: API_URL is empty or missing in supabase status output"
             exit 1
           fi
+
+          # 이후 단계(E2E)에서 Next.js 서버가 Supabase에 접근할 수 있도록 영속 전파
+          echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_KEY" >> $GITHUB_ENV
 
           SUPABASE_URL="$API_URL" \
           SUPABASE_SERVICE_ROLE_KEY="$SERVICE_KEY" \

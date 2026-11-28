@@ -16,8 +16,12 @@ export default function QueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: CACHE_EXPIRY_MS, // 5분 이내 background refetch 없음
+            // staleTime: 0 — SSR hydration 직후 브라우저가 즉시 refetch.
+            // E2E 목(page.route)은 브라우저 요청만 가로챔: staleTime>0이면 SSR 캐시를
+            // 그대로 사용해 목이 발동하지 않고 테스트가 실패함.
+            staleTime: 0,
             gcTime: CACHE_EXPIRY_MS, // 5분 뒤 inactive query 메모리 해제
+            refetchOnWindowFocus: false, // 탭 전환 시 불필요한 refetch 방지
           },
         },
       })

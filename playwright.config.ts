@@ -24,6 +24,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
+  timeout: 60_000, // SC-002 스크롤 복원 등 단계 스크롤 포함 테스트 여유 (기본 30s → 60s)
   reporter: process.env.CI ? "github" : "html",
   use: {
     baseURL: "http://localhost:3000",
@@ -36,11 +37,18 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // CI: 이미 build 완료 → start 사용. 로컬: dev 서버 재사용
-    command: process.env.CI ? "npm run start" : "npm run dev",
+    // CI: 이미 build 완료 → start 사용.
+    // 로컬: dotenv-cli로 .env.test.local을 주입해 로컬 Supabase로 연결.
+    //   .env.local(원격 Supabase)이 환경에 있어도 덮어씀.
+    // reuseExistingServer: 이미 떠 있는 서버 재사용 — 단, 직접 시작 시
+    //   반드시 같은 커맨드(dotenv -e .env.test.local -- npm run dev)로 시작해야
+    //   원격 Supabase에 붙지 않음.
+    command: process.env.CI
+      ? "npm run start"
+      : "npm run dev:test",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 300_000, // Windows dev 서버 초기 컴파일 여유 (120s → 300s)
   },
   // globalSetup: "./tests/e2e/global-setup.ts",
   // ↑ S3+ 가변 테이블(cart 등) 추가 시 주석 해제 — FR-009 2단계 초기화 (결정 메모 U3)
