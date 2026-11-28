@@ -24,6 +24,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
+  timeout: 60_000, // SC-002 스크롤 복원 등 단계 스크롤 포함 테스트 여유 (기본 30s → 60s)
   reporter: process.env.CI ? "github" : "html",
   use: {
     baseURL: "http://localhost:3000",

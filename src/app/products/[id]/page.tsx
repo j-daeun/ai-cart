@@ -10,7 +10,9 @@ export default async function ProductDetailPage({ params }: Props) {
   const product = await fetchProductDetail(id);
 
   return (
-    <div className="max-w-full overflow-x-hidden">
+    // position:absolute inset:0: <main position:relative> 높이를 채우고 body 오버플로 방지.
+    // overflow-y-auto: 긴 상세 콘텐츠(이미지 등)는 이 래퍼 안에서 스크롤.
+    <div className="absolute inset-0 overflow-x-hidden overflow-y-auto">
       {/* 대표 이미지 (FR-001·FR-019) */}
       {product.thumbnailUrl && (
         <img

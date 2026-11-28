@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/product-images/**",
       },
+      {
+        // 로컬 Supabase Docker — E2E 테스트 환경 (http://127.0.0.1:54321)
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "54321",
+        pathname: "/storage/v1/object/public/product-images/**",
+      },
     ],
   },
 };

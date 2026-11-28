@@ -73,6 +73,9 @@ export default function ProductList({
   }, [isFetchingNextPage]);
 
   // 초기 스크롤 복원 — initialScrollTop이 있으면 한 번만 실행
+  // rAF: position:absolute 요소는 effect 시점에 layout이 미확정일 수 있어
+  //      scrollToOffset 시 scrollTop이 0으로 클램프될 수 있음.
+  //      또한 직접 scrollTop 할당으로 virtualizer 내부 offset 계산 오차를 우회.
   useEffect(() => {
     if (
       initialScrollTop !== undefined &&
@@ -80,7 +83,12 @@ export default function ProductList({
       allItems.length > 0
     ) {
       restoredRef.current = true;
-      virtualizer.scrollToOffset(initialScrollTop, { align: "start" });
+      const target = initialScrollTop;
+      requestAnimationFrame(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = target;
+        }
+      });
     }
   }, [initialScrollTop, allItems.length, virtualizer]);
 
@@ -128,10 +136,13 @@ export default function ProductList({
 
   const totalHeight = virtualizer.getTotalSize();
 
+  // position:absolute inset:0 — <main position:relative> 안을 정확히 채움.
+  // height:100% 대신 절대 위치를 사용: flex 자식에서 percentage 높이 해석이 불안정한
+  // 경우(SSR hydration 타이밍 등)에도 containing block 크기로 확정 결정됨.
   return (
     <div
       ref={containerRef}
-      style={{ height: "100%", overflowY: "auto" }}
+      style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, overflowY: "auto" }}
       aria-label="상품 목록"
     >
       {/* 접근성: 로딩 상태 — FR-015 */}
